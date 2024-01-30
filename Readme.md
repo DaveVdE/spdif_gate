@@ -1,65 +1,19 @@
-# Raspberry Pi Pico spdif_rx
+# SPDIF Gate
 
-## Overview
-* SPDIF receiver by rp2040 PIO function
-* format: 2ch, 16bit or 24bit
-* sampling frequency: 44.1 KHz, 48.0 KHz, 88.2 KHz, 96.0 KHz, 176.4 KHz, 192.0 KHz
-* signal detecting function for all supported sampling frequencies
+Forked from [Elehobica's wonderful work](https://github.com/elehobica/pico_spdif_rx) on decoding the S/PDIF protocol on the RP2040's
+PIO state machine, I used it to make this small program. I did however break the fork link so that I would not create a PR on the
+upstream repo by mistake.
 
-## Supported Board and Peripheral Devices
-* Raspberry Pi Pico (rp2040)
-* SPDIF Coaxial or TOSLINK Rx module (DLR1160 or equivalent)
+All credit is due to Elehobica's work. Most of the files in this repository come from upstream, I simply added the "spdif_gate" application
+in the samples folder.
 
-## Pin Assignment & Connection
-### SPDIF Rx
-| Pico Pin # | GPIO | Function | Connection |
-----|----|----|----
-| 20 | GP15 | DATA | from SPDIF data |
+This project started to solve a problem that was created by "Smart TVs" that don't go to sleep when you think they do. They keep humming 
+in the background when the display is off, keeping a steady bit stream on their TOSLINK outputs. A family member uses a hairing aid and has 
+the problem that a device he uses to convert the TV's optical audio into a bluetooth audio stream doesn't fully turn off when the TV is not 
+in use, causing continuous audio cues as he moves around the house upon his hearing aid establishing link with the device near the TV.
 
-![SPDIF_Rx_Schematic](doc/SPDIF_Rx_Schematic.png)
+I built a device with a custom PCB around a Raspberry Pi Pico, fitted with an optical receiver and transmitter with an AND gate in between 
+(technically a quad NAND of which to gates are configured as an AND gate) so that the RP2040 can read the incoming S/PDIF signal and 
+decide if real audio is transmitted or if it's just an empty stream with no audio, and turn the gate on and off accordingly 
+(with a preset timeout of 3 minutes).
 
-Notes:
-
-* 74HC04 should be genuine device, otherwise (counterfeit device) it could not work at higher sampling frequencies.
-* if TOSLINK only, direct connection from module output to GP15 will work as well.
-
-## How to build
-* See ["Getting started with Raspberry Pi Pico"](https://datasheets.raspberrypi.org/pico/getting-started-with-pico.pdf)
-* Build is confirmed only in Developer Command Prompt for VS 2019 and Visual Studio Code on Windows enviroment
-* Put "pico-sdk", "pico-examples" (, "pico-extras" and "pico-playground") on the same level with this project folder.
-* Confirmed under Pico SDK 1.4.0
-```
-> git clone -b master https://github.com/raspberrypi/pico-sdk.git
-> cd pico-sdk
-> git submodule update -i
-> cd ..
-> git clone -b master https://github.com/raspberrypi/pico-examples.git
->
-> git clone https://github.com/raspberrypi/pico-extras.git
-> cd pico-extras
-> git submodule update -i
-> cd ..
-> 
-> git clone -b main https://github.com/elehobica/pico_spdif_rx.git
-```
-* Lanuch "Developer Command Prompt for VS 2019"
-```
-> cd pico_spdif_rx
-> cd samples/xxxxx  # sample project directory
-> mkdir build
-> cd build
-> cmake -G "NMake Makefiles" ..
-> nmake
-```
-* Put "pico_spdif_rx.uf2" on RPI-RP2 drive
-
-## Decode output format
-* 32bit output for each SPDIF sub frame including header, audio data, AUX, VUCP
-* see comments in [spdif_rx.pio](spdif_rx.pio) for further detail
-
-## Sample projects
-### detect_samp_freq
-* display sampling frequency, C bits of SPDIF frame and number of parity errors while decoding
-
-### spdif_to_i2s_32b
-* convert SPDIF input to I2S 32bit output
