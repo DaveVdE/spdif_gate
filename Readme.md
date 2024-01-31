@@ -7,6 +7,8 @@ upstream repo by mistake.
 All credit is due to Elehobica's work. Most of the files in this repository come from upstream, I simply added the "spdif_gate" application
 in the samples folder.
 
+![](photos/IMG_9236.jpg)
+
 This project started to solve a problem that was created by "Smart TVs" that don't go to sleep when you think they do. They keep humming 
 in the background when the display is off, keeping a steady bit stream on their TOSLINK outputs. A family member uses a hairing aid and has 
 the problem that a device he uses to convert the TV's optical audio into a bluetooth audio stream doesn't fully turn off when the TV is not 
@@ -17,3 +19,4 @@ I built a device with a custom PCB around a Raspberry Pi Pico, fitted with an op
 decide if real audio is transmitted or if it's just an empty stream with no audio, and turn the gate on and off accordingly 
 (with a preset timeout of 3 minutes).
 
+You can find some photos in the photos directory, the schematics and PCB files in the board directory and CAD models for the enclosure in the models directory.
